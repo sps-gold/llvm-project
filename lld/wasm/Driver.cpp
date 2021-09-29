@@ -456,6 +456,9 @@ static void readConfigs(opt::InputArgList &args) {
 
   if (args.hasArg(OPT_print_map))
     config->mapFile = "-";
+
+  if (auto *arg = args.getLastArg(OPT_thinlto_jobs))
+    config->thinLTOJobs = arg->getValue();
 }
 
 // Some Config members do not directly correspond to any particular
@@ -645,6 +648,10 @@ static void createSyntheticSymbols() {
     } else {
       WasmSym::tableBase32 = nullptr;
     }
+
+    // FIXME add condition for exception
+    WasmSym::cppException = createUndefinedTag("__cpp_exception", );
+    WasmSym::cLongjmp = createUndefinedTag("__c_longjmp", );
   } else {
     // For non-PIC code
     WasmSym::stackPointer = createGlobalVariable("__stack_pointer", true);

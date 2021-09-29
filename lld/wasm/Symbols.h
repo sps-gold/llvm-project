@@ -55,6 +55,7 @@ public:
     UndefinedDataKind,
     UndefinedGlobalKind,
     UndefinedTableKind,
+    UndefinedTagKind,
     LazyKind,
   };
 
@@ -66,7 +67,8 @@ public:
     return symbolKind == UndefinedFunctionKind ||
            symbolKind == UndefinedDataKind ||
            symbolKind == UndefinedGlobalKind ||
-           symbolKind == UndefinedTableKind;
+           symbolKind == UndefinedTableKind ||
+           symbolKind == UndefinedTagKind;
   }
 
   bool isLazy() const { return symbolKind == LazyKind; }
@@ -459,6 +461,19 @@ public:
   InputTag *tag;
 };
 
+class UndefinedTag : public TagSymbol {
+public:
+  UndefinedTag(StringRef name, llvm::Optional<StringRef> importName,
+               llvm::Optional<StringRef> importModule, uint32_t flags,
+               InputFile *file = nullptr, const WasmSignature *sig = nullptr)
+      : TagSymbol(name, UndefinedTagKind, flags, file, sig) {
+    this->importName = importName;
+    this->importModule = importModule;
+  }
+
+  static bool classof(const Symbol *s) { return s->kind() == UndefinedTagKind; }
+};
+
 // LazySymbol represents a symbol that is not yet in the link, but we know where
 // to find it if needed. If the resolver finds both Undefined and Lazy for the
 // same name, it will ask the Lazy to load a file.
@@ -580,6 +595,10 @@ struct WasmSym {
   // Used as an address space for function pointers, with each function that is
   // used as a function pointer being allocated a slot.
   static TableSymbol *indirectFunctionTable;
+
+  // TODO
+  static UndefinedTag *cppException;
+  static UndefinedTag *cLongjmp;
 };
 
 // A buffer class that is large enough to hold any Symbol-derived

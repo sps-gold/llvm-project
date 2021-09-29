@@ -664,6 +664,15 @@ Symbol *ObjFile::createUndefined(const WasmSymbol &sym, bool isCalledDirectly) {
     return symtab->addUndefinedTable(name, sym.Info.ImportName,
                                      sym.Info.ImportModule, flags, this,
                                      sym.TableType);
+  case WASM_SYMBOL_TYPE_TAG:
+    // We only enter here when there are tag symbols for C++ exceptions
+    // (__cpp_exception) or C longjmp (__c_longjmp) and we use dynamic linking
+    // in which we don't define those symbols. These symbols are always binding
+    // global.
+    assert(sym.isBindingGlobal());
+    return symtab->addUndefinedTag(name, sym.Info.ImportName,
+                                   sym.Info.ImportModule, flags, this,
+                                   sym.TagType);
   case WASM_SYMBOL_TYPE_SECTION:
     llvm_unreachable("section symbols cannot be undefined");
   }

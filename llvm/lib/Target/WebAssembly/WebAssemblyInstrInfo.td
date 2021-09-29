@@ -416,8 +416,10 @@ def : Pat<(i32 (WebAssemblywrapper texternalsym:$addr)),
 def : Pat<(i64 (WebAssemblywrapper texternalsym:$addr)),
           (CONST_I64 texternalsym:$addr)>, Requires<[IsNotPIC, HasAddr64]>;
 
-def : Pat<(i32 (WebAssemblywrapper mcsym:$sym)), (CONST_I32 mcsym:$sym)>;
-def : Pat<(i64 (WebAssemblywrapper mcsym:$sym)), (CONST_I64 mcsym:$sym)>;
+def : Pat<(i32 (WebAssemblyWrapperREL texternalsym:$addr)),
+          (CONST_I32 texternalsym:$addr)>, Requires<[IsPIC, HasAddr32]>;
+def : Pat<(i64 (WebAssemblyWrapperREL texternalsym:$addr)),
+          (CONST_I64 texternalsym:$addr)>, Requires<[IsPIC, HasAddr64]>;
 
 //===----------------------------------------------------------------------===//
 // Additional sets of instructions.

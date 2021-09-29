@@ -58,6 +58,8 @@ std::string toString(wasm::Symbol::Kind kind) {
     return "UndefinedGlobal";
   case wasm::Symbol::UndefinedTableKind:
     return "UndefinedTable";
+  case wasm::Symbol::UndefinedTagKind:
+    return "UndefinedTag";
   case wasm::Symbol::LazyKind:
     return "LazyKind";
   case wasm::Symbol::SectionKind:
